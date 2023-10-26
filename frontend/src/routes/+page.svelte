@@ -1,11 +1,7 @@
 <script lang='ts'>
-	import { onMount } from 'svelte';
 	import type { event } from '$lib/utiltypes';	
 	
-	let events: event[] = [];
-	
-	onMount(async () => {
-		events = [
+	let events: event[] = [
 			{
 				name: 'Event 1',
 				date: new Date(),
@@ -104,8 +100,8 @@
 				artist: 'Artist 2',
 				genre: 'Genre 2'
 			},
-		]
-	});
+		];
+	
 </script>
 
 <main data-theme="light">
@@ -117,6 +113,7 @@
 		{#each events as event}
 			<div id="event-card">
 				<h1>{event.name}</h1>
+				<img src="https://cdn.shopify.com/s/files/1/0651/9639/2689/files/DGD-DESKTOP-HERO_1000x1000.jpg?v=1656558793">
 				<a href="/ticketinfo"><button>Reserve Tickets</button></a>
 			</div>
 		{/each}
@@ -124,6 +121,10 @@
 </main>
 
 <style>
+
+	#event-card img {
+		width: 80%;
+	}
 
 	a {
 		text-decoration: none;
