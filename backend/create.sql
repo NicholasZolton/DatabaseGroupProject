@@ -35,7 +35,7 @@ CREATE TABLE SELLER(
 
 CREATE TABLE `ORDER`(
     Order_ID         INT             NOT NULL,
-    Seller_ID         INT             NOT NULL,
+    Seller_ID        INT             NOT NULL,
     Buyer_ID         INT             NOT NULL,
 
    CONSTRAINT OrderPK
