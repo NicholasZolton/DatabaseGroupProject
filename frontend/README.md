@@ -1,38 +1,25 @@
-# create-svelte
+# First Steps to Run
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+The very first thing you need to do if you want to run this frontend is do `npm install` in
+the base frontend directory.
 
-## Creating a project
+This will install svelte and all the necessary dependencies so that you can successfully run
+the development server and build scripts.
 
-If you're seeing this, you've probably already done this step. Congrats!
+Next, all you need to do is either run `npm run dev` to start the development server or
+`npm run build` to build the frontend for production.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+If you want to run the development server, you can access it at the address mentioned in
+your console (after running `npm run dev`) in your web browser by default.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+If you want to build the frontend for production, you can find the built files in the
+`build` directory.
 
-## Developing
+# Updating Frontend
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Once you have done npm install and `npm run dev`, you can simply update the .svelte files and the 
+changes will automatically appear on your development server without you even having to refresh
+the page. 
 
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+All you will need to do to see these changes in real time is open the web development server in your
+web browser.
