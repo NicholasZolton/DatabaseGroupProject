@@ -1,4 +1,4 @@
-CREATE TABLE `USER`(
+CREATE TABLE [USER](
     User_ID     INT             NOT NULL,
     UserName    VARCHAR(20)     NOT NULL,
     Email       VARCHAR(30)     NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE SELLER(
     FOREIGN KEY(User_ID) REFERENCES USER(User_ID)
                   ON DELETE CASCADE         ON UPDATE CASCADE);
 
-CREATE TABLE `ORDER`(
+CREATE TABLE [ORDER](
     Order_ID         INT             NOT NULL,
     Seller_ID        INT             NOT NULL,
     Buyer_ID         INT             NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE VENUE(
    CONSTRAINT VenuePK
     PRIMARY KEY(Venue_ID));
 
-CREATE TABLE `EVENT`(
+CREATE TABLE [EVENT](
     Event_ID        INT             NOT NULL,
     EventName       VARCHAR(30)     NOT NULL,
     EventType       VARCHAR(30)     NOT NULL,
@@ -77,7 +77,8 @@ CREATE TABLE `EVENT`(
 CREATE TABLE TICKET(
     Ticket_ID        INT             NOT NULL,
     Event_ID         INT             NOT NULL,
-    Venue_ID         INT             NOT NULL,
+    Venue_ID         INT,
+	Owner_ID		 INT			 NOT NULL,
     
    CONSTRAINT TicketPK
     PRIMARY KEY(Ticket_ID),
