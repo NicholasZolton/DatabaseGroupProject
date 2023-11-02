@@ -168,7 +168,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: left;
-		background-color: #f5f5f5;
+		/* background-color: #f5f5f5; */
 	}
 	
 	grad-text {
