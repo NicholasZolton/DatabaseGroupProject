@@ -22,39 +22,15 @@
 
 <main>
 	<div id="form">
-		<h2>Add Tickets to Sell</h2>
+		<h2>Create a new Venue</h2>
 
-		<h3>Venue:</h3>
-		<select>
-			<option selected disabled value="">
-				Select 
-			</option>
-			{#each venues as venue}
-				<option>
-					{venue}
-				</option>
-			{/each}
-		</select>
+		<h3>Name:</h3>
+		<input type="text" aria-label="Name" />
 
-		<h3>Date:</h3>
-		<input type="date" aria-label="Date" />
+		<h3>Capacity:</h3>
+		<input type="number" aria-label="Capacity" />
 
-		<h3>Seat Number:</h3>
-		<select>
-			<option selected disabled value="">
-				Select 
-			</option>
-			{#each ticketSeats as seat}
-				<option>
-					{seat}
-				</option>
-			{/each}
-		</select>
-
-		<h3>Price:</h3>
-		<input type="number" aria-label="Price" />
-		
-		<h3>Thumbnail</h3>
+		<h3>Thumbnail:</h3>
 		<input type="file" aria-label="Thumbnail" />
 		
 		<div id="button-centerer">
