@@ -167,7 +167,8 @@
 		height: 100%;
 		display: flex;
 		flex-wrap: wrap;
-		justify-content: left;
+		align-items: center;
+		justify-content: center;
 		/* background-color: #f5f5f5; */
 	}
 	
@@ -181,7 +182,7 @@
 	}
 	
 	#event-card {
-		width: 300px;
+		width: 20%;
 		height: 300px;
 		background-color: #fff;
 		border-radius: 10px;

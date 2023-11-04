@@ -15,35 +15,38 @@
 
 <main>
 	<div id="form">
-		<h2>Buy Tickets to: Jackpot Juicer</h2>
-		<img src="https://cdn.shopify.com/s/files/1/0651/9639/2689/files/DGD-DESKTOP-HERO_1000x1000.jpg?v=1656558793">
-
-		<h3>Venue: The Factory</h3>
-
-		<h3>Date: 11/28/2023</h3>
-
-		<h3>Seat Number:</h3>
-		<select>
-			<option selected disabled value="">
-				Select 
-			</option>
-			{#each ticketSeats as seat}
-				<option>
-					{seat}
-				</option>
-			{/each}
-		</select>
-
-		<h3>Price:</h3>
-		<h3>$100</h3>
-		
-		<div id="button-centerer">
-			<button>Buy Now!</button>
-		</div>
+		<h1>Login</h1>
+		<p>Username:</p>
+		<input type="text" placeholder="adalovelace">
+		<p>Password:</p>
+		<input type="password" placeholder="password123">
+		<div id="button-spacer"></div>
+		<button>Login</button>
 	</div>
 </main>
 
 <style>
+
+	#button-spacer {
+		height: 10px;
+	}
+
+	#form button {
+		width: 80%;
+		margin-bottom: 30px;
+	}
+
+	#form p {
+		margin: 0;
+	}
+
+	#form input {
+		width: 60%;
+	}
+
+	#form h1 {
+		margin-bottom: 1rem;
+	}
 
 	#button-centerer button {
 		width: 80%;
