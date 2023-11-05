@@ -35,16 +35,16 @@ CREATE TABLE SELLER(
 
 CREATE TABLE [ORDER](
     Order_ID         INT             NOT NULL,
-    Seller_ID        INT             NOT NULL,
-    Buyer_ID         INT             NOT NULL,
+    Seller_ID        INT,
+    Buyer_ID         INT,
 
    CONSTRAINT OrderPK
     PRIMARY KEY(Order_ID),
    CONSTRAINT OrderSellerFK
-    FOREIGN KEY(Seller_ID) REFERENCES SELLER(Seller_ID)
+    FOREIGN KEY(Seller_ID) REFERENCES SELLER(User_ID)
                   ON DELETE SET NULL         ON UPDATE CASCADE,
    CONSTRAINT OrderBuyerFK
-    FOREIGN KEY(Buyer_ID) REFERENCES SELLER(Buyer_ID)
+    FOREIGN KEY(Buyer_ID) REFERENCES BUYER(User_ID)
                   ON DELETE SET NULL         ON UPDATE CASCADE);
 
 CREATE TABLE VENUE(
@@ -66,7 +66,7 @@ CREATE TABLE [EVENT](
     EventTime       VARCHAR(30)     NOT NULL,
     EventDate       VARCHAR(30)     NOT NULL,
     Age_Limit       INT             NOT NULL,
-    Venue_ID        INT             NOT NULL,
+    Venue_ID        INT,
 
    CONSTRAINT EventPK
     PRIMARY KEY(Event_ID),
@@ -76,24 +76,24 @@ CREATE TABLE [EVENT](
 
 CREATE TABLE TICKET(
     Ticket_ID        INT             NOT NULL,
-    Event_ID         INT             NOT NULL,
+    Event_ID         INT,
     Venue_ID         INT,
 	Owner_ID		 INT			 NOT NULL,
     
    CONSTRAINT TicketPK
     PRIMARY KEY(Ticket_ID),
    CONSTRAINT TicketEventFK
-    FOREIGN KEY(Event_ID) REFERENCES [EVENT](Seller_ID)
+    FOREIGN KEY(Event_ID) REFERENCES [EVENT](Event_ID)
                   ON DELETE SET NULL         ON UPDATE CASCADE,
    CONSTRAINT TicketVenueFK
     FOREIGN KEY(Venue_ID) REFERENCES VENUE(Venue_ID)
                   ON DELETE SET NULL         ON UPDATE CASCADE,
    CONSTRAINT TicketOwnerFK
-    FOREIGN KEY(Event_ID) REFERENCES [USER](User_ID)
+    FOREIGN KEY(Owner_ID) REFERENCES [USER](User_ID)
                   ON DELETE CASCADE          ON UPDATE CASCADE);
 
 CREATE TABLE TICKETS_IN_ORDER (
-    Ticket_ID        INT             NOT NULL,
+    Ticket_ID        INT,
     Order_ID         INT             NOT NULL,
     Price            REAL            NOT NULL,
 
@@ -101,7 +101,7 @@ CREATE TABLE TICKETS_IN_ORDER (
     PRIMARY KEY(Ticket_ID,Order_ID),
    CONSTRAINT Tickets_In_OrderTicketFK
     FOREIGN KEY(Ticket_ID) REFERENCES TICKET(Ticket_ID)
-                  ON DELETE SET NULL         ON UPDATE CASCADE,
+                  ON DELETE SET NULL       ON UPDATE CASCADE,
    CONSTRAINT Tickets_In_OrderOrderFK
-    FOREIGN KEY(Order_ID) REFERENCES TICKET(Order_ID)
+    FOREIGN KEY(Order_ID) REFERENCES [ORDER](Order_ID)
                   ON DELETE CASCADE         ON UPDATE CASCADE);
