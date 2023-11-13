@@ -1,5 +1,5 @@
 <?php
-    define("DataBaseLocation","127.0.0.1");
+    define("DataBaseLocation","127.0.0.1"); #Change these based on the location/name of the database you are using.
     define("DBUserName","root");
     define("DBPassword","");
     define("NameOfDatabase","forassignment8");
