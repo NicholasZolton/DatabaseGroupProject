@@ -1,5 +1,5 @@
-CREATE TABLE [USER](
-    User_ID     INT             NOT NULL,
+CREATE TABLE `USER`(
+    User_ID     INT             NOT NULL  AUTO_INCREMENT,
     UserName    VARCHAR(20)     NOT NULL,
     Email       VARCHAR(30)     NOT NULL,
     PassW       VARCHAR(20)     NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE BUYER(
    CONSTRAINT BuyerPK
     PRIMARY KEY(User_ID),
    CONSTRAINT BuyerFK
-    FOREIGN KEY(User_ID) REFERENCES [USER](User_ID)
+    FOREIGN KEY(User_ID) REFERENCES `USER`(User_ID)
                   ON DELETE CASCADE         ON UPDATE CASCADE);
 
 CREATE TABLE SELLER(
@@ -30,11 +30,11 @@ CREATE TABLE SELLER(
    CONSTRAINT SellerPK
     PRIMARY KEY(User_ID),
    CONSTRAINT SellerFK
-    FOREIGN KEY(User_ID) REFERENCES [USER](User_ID)
+    FOREIGN KEY(User_ID) REFERENCES `USER`(User_ID)
                   ON DELETE CASCADE         ON UPDATE CASCADE);
 
-CREATE TABLE [ORDER](
-    Order_ID         INT             NOT NULL,
+CREATE TABLE `ORDER`(
+    Order_ID         INT NOT NULL  AUTO_INCREMENT,
     Seller_ID        INT,
     Buyer_ID         INT,
 
@@ -48,7 +48,7 @@ CREATE TABLE [ORDER](
                   ON DELETE SET NULL         ON UPDATE CASCADE);
 
 CREATE TABLE VENUE(
-    Venue_ID         INT             NOT NULL,
+    Venue_ID         INT             NOT NULL  AUTO_INCREMENT,
     VenueName        VARCHAR(30)     NOT NULL,
     Capacity         INT             NOT NULL    DEFAULT 0,
     StreetAddress    VARCHAR(30)     NOT NULL,
@@ -59,8 +59,8 @@ CREATE TABLE VENUE(
    CONSTRAINT VenuePK
     PRIMARY KEY(Venue_ID));
 
-CREATE TABLE [EVENT](
-    Event_ID        INT             NOT NULL,
+CREATE TABLE `EVENT`(
+    Event_ID        INT             NOT NULL  AUTO_INCREMENT,
     EventName       VARCHAR(30)     NOT NULL,
     EventType       VARCHAR(30)     NOT NULL,
     EventTime       VARCHAR(30)     NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE [EVENT](
                   ON DELETE SET NULL    ON UPDATE CASCADE);
 
 CREATE TABLE TICKET(
-    Ticket_ID        INT             NOT NULL,
+    Ticket_ID        INT             NOT NULL AUTO_INCREMENT,
     Event_ID         INT,
     Venue_ID         INT,
 	Owner_ID		 INT			 NOT NULL,
@@ -83,13 +83,13 @@ CREATE TABLE TICKET(
    CONSTRAINT TicketPK
     PRIMARY KEY(Ticket_ID),
    CONSTRAINT TicketEventFK
-    FOREIGN KEY(Event_ID) REFERENCES [EVENT](Event_ID)
+    FOREIGN KEY(Event_ID) REFERENCES `EVENT`(Event_ID)
                   ON DELETE SET NULL         ON UPDATE CASCADE,
    CONSTRAINT TicketVenueFK
     FOREIGN KEY(Venue_ID) REFERENCES VENUE(Venue_ID)
                   ON DELETE SET NULL         ON UPDATE CASCADE,
    CONSTRAINT TicketOwnerFK
-    FOREIGN KEY(Owner_ID) REFERENCES [USER](User_ID)
+    FOREIGN KEY(Owner_ID) REFERENCES `USER`(User_ID)
                   ON DELETE CASCADE          ON UPDATE CASCADE);
 
 CREATE TABLE TICKETS_IN_ORDER (
@@ -101,7 +101,7 @@ CREATE TABLE TICKETS_IN_ORDER (
     PRIMARY KEY(Ticket_ID,Order_ID),
    CONSTRAINT Tickets_In_OrderTicketFK
     FOREIGN KEY(Ticket_ID) REFERENCES TICKET(Ticket_ID)
-                  ON DELETE SET NULL       ON UPDATE CASCADE,
+                  ON DELETE CASCADE       ON UPDATE CASCADE,
    CONSTRAINT Tickets_In_OrderOrderFK
-    FOREIGN KEY(Order_ID) REFERENCES [ORDER](Order_ID)
+    FOREIGN KEY(Order_ID) REFERENCES `ORDER`(Order_ID)
                   ON DELETE CASCADE         ON UPDATE CASCADE);
