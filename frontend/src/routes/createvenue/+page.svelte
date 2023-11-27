@@ -18,6 +18,9 @@
 			"The Arena",	
 		]
 	});
+	
+	let name: String = "";
+	let capacity: Number = 0;
 </script>
 
 <main>
@@ -25,10 +28,10 @@
 		<h2>Create a new Venue</h2>
 
 		<h3>Name:</h3>
-		<input type="text" aria-label="Name" />
+		<input bind:value={name} type="text" aria-label="Name" />
 
 		<h3>Capacity:</h3>
-		<input type="number" aria-label="Capacity" />
+		<input bind:value={capacity} type="number" aria-label="Capacity" />
 
 		<h3>Thumbnail:</h3>
 		<input type="file" aria-label="Thumbnail" />

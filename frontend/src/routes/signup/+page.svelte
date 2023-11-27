@@ -1,27 +1,49 @@
 <script lang='ts'>
 	import { onMount } from "svelte";
+	import { base_url } from "$lib/dbfuncs";
 
-	let ticketSeats: String[] = [];
 	onMount(() => {
-		ticketSeats = [
-			"A52",
-			"B23",
-			"C56",
-			"C57",
-			"D12"
-		]
 	});
+	
+	async function sendSignup(event: any) {
+		event.preventDefault();
+
+		// send the username and password to the server and check if they are correct
+		const response = await fetch(`${base_url}/signup`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				username: username,
+				password: password
+			})
+		});
+		
+		const data = await response.json();
+		
+		if (data.success) {
+			// redirect to the home page
+			window.location.href = "/";
+		} else {
+			// display an error message
+			alert("Incorrect username or password");
+		}
+	}
+	
+	let username: String = "";
+	let password: String = "";
 </script>
 
 <main>
 	<div id="form">
 		<h1>Sign Up</h1>
 		<p>Username:</p>
-		<input type="text" placeholder="adalovelace">
+		<input type="text" placeholder="adalovelace" bind:value={username}>
 		<p>Password:</p>
-		<input type="password" placeholder="password123">
+		<input type="password" placeholder="password123" bind:value={password}>
 		<div id="button-spacer"></div>
-		<button>Sign Up</button>
+		<button on:click={sendSignup}>Sign Up</button>
 	</div>
 </main>
 

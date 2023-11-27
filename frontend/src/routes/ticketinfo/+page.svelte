@@ -1,8 +1,24 @@
-<script>
+<script lang='ts'>
 	import { onMount } from "svelte";
+	import type { event } from "$lib/utiltypes";
 
+	let ticketId: String | null = "";
+	let ticketInfo: event | null = null;
 	onMount(() => {
-
+		// get the ticket id from the url
+		const urlParams = new URLSearchParams(window.location.search);
+		ticketId = urlParams.get('id');
+		console.log(ticketId);
+		
+		// get the ticket info from the server
+		ticketInfo = {
+			id: 1,
+			name: "Jackpot Juicer",
+			date: new Date(),
+			venue: "The Factory",
+			artist: "Alec Benjamin",
+			genre: "Rock"
+		}	
 	});
 </script>
 
@@ -14,20 +30,24 @@
 	</div>
 	
 	<div id="event-info">
-		<h2>Event Name</h2>
-		<h5>Jackpot Juicer</h5>
-		<h2>Event Date</h2>
-		<h5>Alec Benjamin</h5>
-		<h2>Event Venue</h2>
-		<h5>The Factory</h5>
-		<h2>Event Artist</h2>
-		<h5>Alec Benjamin</h5>
-		<h2>Event Genre</h2>	
-		<h5>Rock</h5>
+		{#if ticketInfo == null}
+			<h1>Loading...</h1>
+		{:else}
+			<h2>Event Name</h2>
+			<h5>{ticketInfo.name}</h5>
+			<h2>Event Date</h2>
+			<h5>{ticketInfo.date.toLocaleString()}</h5>
+			<h2>Event Venue</h2>
+			<h5>{ticketInfo.venue}</h5>
+			<h2>Event Artist</h2>
+			<h5>{ticketInfo.artist}</h5>
+			<h2>Event Genre</h2>	
+			<h5>{ticketInfo.genre}</h5>
+		{/if}
 	</div>
 	
 	<div id="event-tickets">
-		<a href="/buytickets"><button>Buy now!</button></a>
+		<a href="/buytickets?id={ticketId}"><button>Buy now!</button></a>
 	</div>
 
 </main>

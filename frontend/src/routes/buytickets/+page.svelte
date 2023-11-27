@@ -1,7 +1,10 @@
 <script lang='ts'>
-	import { onMount } from "svelte";
+	import { onMount, tick } from "svelte";
+	import { base_url } from "$lib/dbfuncs";
+	import type { event } from "$lib/utiltypes";
 
 	let ticketSeats: String[] = [];
+	let ticketInfo: event | null = null;
 	onMount(() => {
 		ticketSeats = [
 			"A52",
@@ -10,37 +13,56 @@
 			"C57",
 			"D12"
 		]
+
+		// get the id from the url
+		const urlParams = new URLSearchParams(window.location.search);
+		const ticketId = urlParams.get('id');
+		console.log(ticketId);
+		
+		// get the ticket info from the server
+		ticketInfo = {
+			id: 1,
+			name: "Jackpot Juicer",
+			date: new Date(),
+			venue: "The Factory",
+			artist: "Alec Benjamin",
+			genre: "Rock"
+		}	
 	});
 </script>
 
 <main>
-	<div id="form">
-		<h2>Buy Tickets to: Jackpot Juicer</h2>
-		<img src="https://cdn.shopify.com/s/files/1/0651/9639/2689/files/DGD-DESKTOP-HERO_1000x1000.jpg?v=1656558793">
+	{#if ticketInfo == null}
+		<h1>Loading...</h1>
+	{:else}
+		<div id="form">
+			<h2>Buy Tickets to: {ticketInfo.name}</h2>
+			<img src="https://cdn.shopify.com/s/files/1/0651/9639/2689/files/DGD-DESKTOP-HERO_1000x1000.jpg?v=1656558793">
 
-		<h3>Venue: The Factory</h3>
+			<h3>Venue: {ticketInfo.venue}</h3>
 
-		<h3>Date: 11/28/2023</h3>
+			<h3>Date: {ticketInfo.date.toLocaleString()}</h3>
 
-		<h3>Seat Number:</h3>
-		<select>
-			<option selected disabled value="">
-				Select 
-			</option>
-			{#each ticketSeats as seat}
-				<option>
-					{seat}
+			<h3>Seat Number:</h3>
+			<select>
+				<option selected disabled value="">
+					Select 
 				</option>
-			{/each}
-		</select>
+				{#each ticketSeats as seat}
+					<option>
+						{seat}
+					</option>
+				{/each}
+			</select>
 
-		<h3>Price:</h3>
-		<h3>$100</h3>
-		
-		<div id="button-centerer">
-			<button>Buy Now!</button>
+			<h3>Price:</h3>
+			<h3>$100</h3>
+			
+			<div id="button-centerer">
+				<button>Buy Now!</button>
+			</div>
 		</div>
-	</div>
+	{/if}
 </main>
 
 <style>
