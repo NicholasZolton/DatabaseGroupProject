@@ -43,7 +43,7 @@
 			return;
 		}
 		current_user.set(parseInt(response.UserID));
-		console.log(get(current_user));
+		console.log($current_user);
 		
 		// redirect to "/"
 		goto("/");

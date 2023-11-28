@@ -82,7 +82,7 @@
 	onMount(async () => {
 		const events = await getEvents();
 		console.log(events);
-		console.log('current user is ' + get(current_user));
+		console.log('current user is ' + $current_user);
 	});
 	
 	let allEvents: any[] = [];
