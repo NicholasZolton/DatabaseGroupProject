@@ -39,7 +39,7 @@
 	// 	},
 	// ]
 	
-	let tickets: any[] = [];
+	let tickets: any[] | null = null;
 	onMount(async () => {
 		const form = new FormData();
 		form.append("UserID", $current_user);
@@ -57,12 +57,9 @@
 		let response: any = await fetch('https://chow-coherent-actually.ngrok-free.app/DBProjectTest/get_user_tickets.php', options)
 		response = await response.json();
 		tickets = response;
+		console.log(tickets);
 	});
 	
-	function sellTicket(id: any) {
-		goto("/sellticket" + "?id=" + id)
-	}
-
 </script>
 
 <main>
@@ -72,18 +69,50 @@
 			<h3>My Tickets:</h3>
 		</div>
 		<div id="main-section">
-			<div id="spacer" style="height: 20px; width: 10px;"/>
-			{#each tickets as ticket}
-				<div id="ticket">
-					<h5>{ticket.EventName}</h5>
-					<button on:click={() => {sellTicket(ticket.ID)}}>Sell Ticket</button>
+			{#if tickets !== null && tickets.length > 0}
+				<div id="spacer" style="height: 20px; width: 10px;"/>
+				{#each tickets as ticket}
+					<div id="ticket">
+						<div id="ticket-information">
+							<h5>{ticket.EventName}</h5>
+							<h5>{ticket.EventType}</h5>
+							<h5>{ticket.VenueName}</h5>
+							<h5>{ticket.EventTime} pm, {ticket.EventDate}</h5>
+						</div>
+						<a href="/selltickets?id={ticket.TicketID}"><button>Sell Ticket</button></a>
+					</div>
+				{/each}
+			{:else if tickets !== null && tickets.length <= 0}
+				<div id="loading-box">
+					<h4>You have no tickets!</h4>
+					<a href="/"><h4>Purchase some now!</h4></a>
 				</div>
-			{/each}
+			{:else}
+				<div id="loading-box">
+					<h4>Loading tickets...</h4>
+				</div>
+			{/if}
 		</div>
 	</div>
 </main>
 
 <style>
+
+	#ticket-information {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-right: 20px;
+	}
+
+	#loading-box {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
 
 	#ticket button {
 		width: 100px;

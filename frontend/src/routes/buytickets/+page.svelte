@@ -22,7 +22,7 @@
 		// get the ticket info from the server
 		ticketInfo = response;	
 		
-		console.log(get(current_user));
+		console.log($current_user);
 	});
 
 	async function buyTicket(event: any) {
@@ -31,7 +31,7 @@
 		// send the username and password to the server and check if they are correct
 		const form = new FormData();
 		form.append("TicketID", ticketId);
-		form.append("BuyerID", get(current_user));
+		form.append("BuyerID", $current_user);
 		console.log(form);
 		
 

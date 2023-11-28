@@ -40,7 +40,7 @@
 			return;
 		}
 		current_user.set(parseInt(response.UserID));
-		console.log(get(current_user).toString() + " logged in!");
+		console.log($current_user.toString() + " logged in!");
 		
 		// redirect to "/"
 		goto("/");

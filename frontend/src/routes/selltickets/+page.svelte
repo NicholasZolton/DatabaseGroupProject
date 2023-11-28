@@ -55,12 +55,14 @@
 			<h4>{ticketInfo.EventName}</h4>
 			<img src="https://cdn.shopify.com/s/files/1/0651/9639/2689/files/DGD-DESKTOP-HERO_1000x1000.jpg?v=1656558793">
 
-			<h3>Venue: {ticketInfo.VenueName}</h3>
+			<h3>Venue:</h3>
+			<h4>{ticketInfo.VenueName}</h4>
 
-			<h3>Date: {ticketInfo.EventTime} pm - {ticketInfo.EventDate}</h3>
+			<h3>Date:</h3>
+			<h4>{ticketInfo.EventTime} pm - {ticketInfo.EventDate}</h4>
 
 			<h3>Venue Address:</h3>
-			<h3>{ticketInfo.StreetAddress}</h3>
+			<h4>{ticketInfo.StreetAddress}</h4>
 
 			<h3>Price:</h3>
 			<input type="text" placeholder="100" bind:value={ticketPrice}>
