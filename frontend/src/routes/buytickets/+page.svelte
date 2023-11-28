@@ -67,7 +67,7 @@
 
 			<h3>Date: {ticketInfo.EventTime} pm - {ticketInfo.EventDate}</h3>
 
-			<h3>Seat Number:</h3>
+			<h3>Venue Address:</h3>
 			<h3>{ticketInfo.StreetAddress}</h3>
 
 			<h3>Price:</h3>

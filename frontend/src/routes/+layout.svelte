@@ -19,7 +19,7 @@
 	<grad-text><a href="/">SeatSeeker</a></grad-text>	
 	<a href="/">Events</a>
 	{#if $current_user != -1}
-	<a href="/">Personal Dashboard</a>
+	<a href="/dashboard">Personal Dashboard</a>
 	<a on:click={logoutUser}>Log Out</a>
 	{:else}
 	<a href="/login">Login</a>

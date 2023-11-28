@@ -1,66 +1,77 @@
 <script lang='ts'>
 	import { onMount } from "svelte";
+	import { current_user } from "$lib/user";
+	import { goto } from "$app/navigation";
 
-	let ticketSeats: String[] = [];
-	let venues: String[] = [];
-	onMount(() => {
-		ticketSeats = [
-			"A52",
-			"B23",
-			"C56",
-			"C57",
-			"D12"
-		]
+	let ticketId: any = 0;
+	let ticketInfo: any = null;
+	let ticketPrice: number = 0;
+	onMount(async () => {
+
+		// get the id from the url
+		const urlParams = new URLSearchParams(window.location.search);
+		ticketId = urlParams.get('id');
+		console.log(ticketId);
 		
-		venues = [
-			"The Factory",
-			"The Stadium",
-			"The Arena",	
-		]
+		// get the ticket info from the server
+		const options = {method: 'GET', headers: {'User-Agent': 'insomnia/2023.5.8', 'ngrok-skip-browser-warning': 'true', 'no-cors': 'true'}};
+		let response: any = await fetch('https://chow-coherent-actually.ngrok-free.app/DBProjectTest/get_ticket_info.php?TicketID=' + ticketId, options)
+		response = await response.json();	
+		
+		// get the ticket info from the server
+		ticketInfo = response;	
 	});
+	
+	async function sellCurrentTicket(event: any) {
+		event.preventDefault();
+
+		// make call to actually sell ticket
+		const form = new FormData();
+		form.append("SellerID", $current_user);
+		form.append("TicketID", ticketId);
+		form.append("Price", ticketPrice.toString());
+
+		let options: any = {
+		method: 'POST',
+		headers: {
+			'User-Agent': 'insomnia/2023.5.8',
+			 'ngrok-skip-browser-warning': 'true',
+			}
+		};
+
+		options.body = form;
+
+		let response: any = await fetch('https://chow-coherent-actually.ngrok-free.app/DBProjectTest/sell_ticket.php', options)
+		response = await response.json();
+		
+		goto("/dashboard");
+	}
 </script>
 
 <main>
-	<div id="form">
-		<h2>Add Tickets to Sell</h2>
+	{#if ticketInfo !== null}
+		<div id="form">
+			<h3>Sell Ticket:</h3>
+			<h4>{ticketInfo.EventName}</h4>
+			<img src="https://cdn.shopify.com/s/files/1/0651/9639/2689/files/DGD-DESKTOP-HERO_1000x1000.jpg?v=1656558793">
 
-		<h3>Venue:</h3>
-		<select>
-			<option selected disabled value="">
-				Select 
-			</option>
-			{#each venues as venue}
-				<option>
-					{venue}
-				</option>
-			{/each}
-		</select>
+			<h3>Venue: {ticketInfo.VenueName}</h3>
 
-		<h3>Date:</h3>
-		<input type="date" aria-label="Date" />
+			<h3>Date: {ticketInfo.EventTime} pm - {ticketInfo.EventDate}</h3>
 
-		<h3>Seat Number:</h3>
-		<select>
-			<option selected disabled value="">
-				Select 
-			</option>
-			{#each ticketSeats as seat}
-				<option>
-					{seat}
-				</option>
-			{/each}
-		</select>
+			<h3>Venue Address:</h3>
+			<h3>{ticketInfo.StreetAddress}</h3>
 
-		<h3>Price:</h3>
-		<input type="number" aria-label="Price" />
-		
-		<h3>Thumbnail</h3>
-		<input type="file" aria-label="Thumbnail" />
-		
-		<div id="button-centerer">
-			<button>Sell Tickets!</button>
+			<h3>Price:</h3>
+			<input type="text" placeholder="100" bind:value={ticketPrice}>
+			
+			<div id="button-centerer">
+				<button on:click={sellCurrentTicket}>Sell Ticket</button>
+			</div>
 		</div>
-	</div>
+	{:else}
+		<h1>Loading...</h1>
+	{/if}
 </main>
 
 <style>
