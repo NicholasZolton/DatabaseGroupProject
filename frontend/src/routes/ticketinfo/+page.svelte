@@ -3,22 +3,23 @@
 	import type { event } from "$lib/utiltypes";
 
 	let ticketId: String | null = "";
-	let ticketInfo: event | null = null;
-	onMount(() => {
+	let ticketInfo: any | null = null;
+	onMount(async () => {
 		// get the ticket id from the url
 		const urlParams = new URLSearchParams(window.location.search);
 		ticketId = urlParams.get('id');
-		console.log(ticketId);
+		
+		// do the request to the server to get the ticket info
+		const options = {method: 'GET', headers: {'User-Agent': 'insomnia/2023.5.8', 'ngrok-skip-browser-warning': 'true', 'no-cors': 'true'}};
+		let response: any = await fetch('https://chow-coherent-actually.ngrok-free.app/DBProjectTest/get_ticket_info.php?TicketID=' + ticketId, options)
+		response = await response.json();	
 		
 		// get the ticket info from the server
-		ticketInfo = {
-			id: 1,
-			name: "Jackpot Juicer",
-			date: new Date(),
-			venue: "The Factory",
-			artist: "Alec Benjamin",
-			genre: "Rock"
-		}	
+		if (response.length == 0) {
+			console.log("No ticket found with that id");
+			return;
+		}
+		ticketInfo = response	
 	});
 </script>
 
@@ -34,15 +35,15 @@
 			<h1>Loading...</h1>
 		{:else}
 			<h2>Event Name</h2>
-			<h5>{ticketInfo.name}</h5>
+			<h5>{ticketInfo.EventName}</h5>
 			<h2>Event Date</h2>
-			<h5>{ticketInfo.date.toLocaleString()}</h5>
+			<h5>{ticketInfo.EventTime} pm - {ticketInfo.EventDate}</h5>
 			<h2>Event Venue</h2>
-			<h5>{ticketInfo.venue}</h5>
-			<h2>Event Artist</h2>
-			<h5>{ticketInfo.artist}</h5>
-			<h2>Event Genre</h2>	
-			<h5>{ticketInfo.genre}</h5>
+			<h5>{ticketInfo.VenueName}</h5>
+			<h2>Event Type</h2>
+			<h5>{ticketInfo.EventType}</h5>
+			<h2>Event Price</h2>	
+			<h5>${(Math.round(ticketInfo.Price * 100) / 100).toFixed(2)}</h5>
 		{/if}
 	</div>
 	

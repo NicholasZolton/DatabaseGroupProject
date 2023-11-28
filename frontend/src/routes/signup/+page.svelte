@@ -1,38 +1,55 @@
 <script lang='ts'>
 	import { onMount } from "svelte";
 	import { base_url } from "$lib/dbfuncs";
+	import { current_user } from "$lib/user";
+	import { get } from "svelte/store";
+	import { goto } from "$app/navigation"; 
 
 	onMount(() => {
 	});
+
+	let username: any = "";
+	let password: any = "";
+	let email: any = "";
+	let dob: any = "";
 	
 	async function sendSignup(event: any) {
 		event.preventDefault();
-
+		
 		// send the username and password to the server and check if they are correct
-		const response = await fetch(`${base_url}/signup`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({
-				username: username,
-				password: password
-			})
-		});
+		const form = new FormData();
+		form.append("Username", username);
+		form.append("Password", password);
+		form.append("Email", email);
+		form.append("DOB", dob);
+
+		let options: any = {
+		method: 'POST',
+		headers: {
+			'User-Agent': 'insomnia/2023.5.8',
+			 'ngrok-skip-browser-warning': 'true',
+			}
+		};
+
+		options.body = form;
+
+		let response: any = await fetch('https://chow-coherent-actually.ngrok-free.app/DBProjectTest/signup.php', options)
+		response = await response.json();
 		
-		const data = await response.json();
+		console.log(response);
 		
-		if (data.success) {
-			// redirect to the home page
-			window.location.href = "/";
-		} else {
-			// display an error message
+		if (response.UserID == null) {
 			alert("Incorrect username or password");
+			return;
 		}
+		current_user.set(parseInt(response.UserID));
+		console.log(get(current_user));
+		
+		// redirect to "/"
+		goto("/");
 	}
+
 	
-	let username: String = "";
-	let password: String = "";
 </script>
 
 <main>
@@ -42,6 +59,10 @@
 		<input type="text" placeholder="adalovelace" bind:value={username}>
 		<p>Password:</p>
 		<input type="password" placeholder="password123" bind:value={password}>
+		<p>Email:</p>
+		<input type="text" placeholder="test@example.com" bind:value={email}>
+		<p>DOB:</p>
+		<input type="text" placeholder="1/1/1950" bind:value={dob}>
 		<div id="button-spacer"></div>
 		<button on:click={sendSignup}>Sign Up</button>
 	</div>

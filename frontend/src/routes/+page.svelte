@@ -2,56 +2,29 @@
 	import type { event } from '$lib/utiltypes';	
 	import { base_url } from '$lib/dbfuncs';
 	import { onMount } from 'svelte';
+	import { current_user } from '$lib/user';
+	import { get } from 'svelte/store';
+	
+	// ngrok-skip-browser-warning
 	
 	async function getEvents() {
-		allEvents = [
-			{
-				id: 1,
-				name: 'Event 1',
-				date: new Date(),
-				venue: 'Venue 1',
-				artist: 'Artist 1',
-				genre: 'Genre 1'
-			},
-			{
-				id: 2,
-				name: 'Event 2',
-				date: new Date(),
-				venue: 'Venue 2',
-				artist: 'Artist 2',
-				genre: 'Genre 2'
-			},
-			{
-				id: 3,
-				name: 'Event 3',
-				date: new Date(),
-				venue: 'Venue 1',
-				artist: 'Artist 1',
-				genre: 'Genre 1'
-			},
-			{
-				id: 4,
-				name: 'Event 4',
-				date: new Date(),
-				venue: 'Venue 2',
-				artist: 'Artist 2',
-				genre: 'Genre 2'
-			},
-			{
-				id: 5,
-				name: 'Event 5',
-				date: new Date(),
-				venue: 'Venue 1',
-				artist: 'Artist 1',
-				genre: 'Genre 1'
-			},
-		];
-		
-		events = allEvents;
 
-		// const response = await fetch(`${base_url}/events`);
-		// const data = await response.json();
-		// return data;
+		const options = {method: 'GET', headers: {'User-Agent': 'insomnia/2023.5.8', 'ngrok-skip-browser-warning': 'true', 'no-cors': 'true'}};
+		let response: any = await fetch('https://chow-coherent-actually.ngrok-free.app/DBProjectTest/get_tickets.php', options)
+		response = await response.json();	
+		
+		allEvents = []
+		for (let i = 0; i < response.length; i++) {
+			allEvents.push({
+				id: response[i].Ticket_ID,
+				name: response[i].EventName,
+				date: new Date(response[i].EventDate),
+				venue: response[i].VenueName,
+				raw_data: response[i]
+			})
+		}
+
+		events = allEvents;
 	}
 	
 	let searchInput: String = "";
@@ -74,15 +47,10 @@
 
 		for (let i = 0; i < allEvents.length; i++) {
 			
-			// for every word in the search input, check if it is a subsequence of any of the event properties
-			// for (let j = 0; j < searchInputWords.length; j++) {
-				if (checkSubsequence(allEvents[i].name.toLowerCase(), searchInput.toLowerCase()) ||
-				 checkSubsequence(allEvents[i].artist.toLowerCase(), searchInput.toLowerCase()) ||
-				  checkSubsequence(allEvents[i].genre.toLowerCase(), searchInput.toLowerCase()) ||
-				   checkSubsequence(allEvents[i].venue.toLowerCase(), searchInput.toLowerCase())) {
-					events.push(allEvents[i]);
-				}
-			// }	
+			if (checkSubsequence(JSON.stringify(allEvents[i]).toLowerCase(), searchInput.toLowerCase())) {
+				events.push(allEvents[i]);
+			}
+
 		}
 		
 		debounce = setTimeout(() => {
@@ -114,10 +82,11 @@
 	onMount(async () => {
 		const events = await getEvents();
 		console.log(events);
+		console.log('current user is ' + get(current_user));
 	});
 	
-	let allEvents: event[] = [];
-	let events: event[] = [];
+	let allEvents: any[] = [];
+	let events: any[] = [];
 	
 </script>
 
@@ -129,7 +98,10 @@
 	<div id="events">
 		{#each events as event}
 			<div id="event-card">
-				<h1>{event.name}</h1>
+				<hgroup>
+					<h6>{event.name}</h6>
+					<h6>{event.raw_data.VenueName}</h6>
+				</hgroup>
 				<img src="https://cdn.shopify.com/s/files/1/0651/9639/2689/files/DGD-DESKTOP-HERO_1000x1000.jpg?v=1656558793">
 				<a href="/ticketinfo?id={event.id}"><button>Reserve Tickets</button></a>
 			</div>
@@ -138,6 +110,13 @@
 </main>
 
 <style>
+
+	hgroup {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin: 0;
+	}
 
 	#event-card img {
 		width: 80%;

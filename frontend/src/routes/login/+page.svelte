@@ -1,38 +1,49 @@
 <script lang='ts'>
 	import { onMount } from "svelte";
 	import { base_url } from "$lib/dbfuncs";
+	import { current_user } from "$lib/user";
+	import { get } from "svelte/store";
+	import { goto } from '$app/navigation';
 	
-	onMount(() => {
+	onMount(async () => {
 		
 	});
 	
-	let username: String = "";
-	let password: String = "";
+	let username: any = "Keshav1";
+	let password: any = "Keshavpass";
 	
 	async function sendLogin(event: any) {
 		event.preventDefault();
-
+		
 		// send the username and password to the server and check if they are correct
-		const response = await fetch(`${base_url}/login`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({
-				username: username,
-				password: password
-			})
-		});
+		const form = new FormData();
+		form.append("Username", username);
+		form.append("Password", password);
+
+		let options: any = {
+		method: 'POST',
+		headers: {
+			'User-Agent': 'insomnia/2023.5.8',
+			 'ngrok-skip-browser-warning': 'true',
+			}
+		};
+
+		options.body = form;
+
+		let response: any = await fetch('https://chow-coherent-actually.ngrok-free.app/DBProjectTest/login.php', options)
+		response = await response.json();
 		
-		const data = await response.json();
+		console.log(response);
 		
-		if (data.success) {
-			// redirect to the home page
-			window.location.href = "/";
-		} else {
-			// display an error message
+		if (response.UserID == null) {
 			alert("Incorrect username or password");
+			return;
 		}
+		current_user.set(parseInt(response.UserID));
+		console.log(get(current_user).toString() + " logged in!");
+		
+		// redirect to "/"
+		goto("/");
 	}
 </script>
 

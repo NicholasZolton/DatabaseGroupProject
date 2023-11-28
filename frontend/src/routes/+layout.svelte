@@ -1,3 +1,15 @@
+<script lang='ts'>
+	import { current_user } from "$lib/user";	
+	import { get } from "svelte/store";
+	import { goto } from "$app/navigation";
+	import { invalidateAll } from "$app/navigation";
+	
+	function logoutUser() {
+		current_user.set(-1);
+		invalidateAll();
+	}
+</script>
+
 <svelte:head>
 	<title>SeatSeeker</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
@@ -6,7 +18,13 @@
 <div id="navbar" data-theme="light">
 	<grad-text><a href="/">SeatSeeker</a></grad-text>	
 	<a href="/">Events</a>
+	{#if $current_user != -1}
 	<a href="/">Personal Dashboard</a>
+	<a on:click={logoutUser}>Log Out</a>
+	{:else}
+	<a href="/login">Login</a>
+	<a href="/signup">Sign Up</a>
+	{/if}
 </div>
 
 <html data-theme='light' lang='en'>

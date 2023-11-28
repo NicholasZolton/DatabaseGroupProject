@@ -2,64 +2,79 @@
 	import { onMount, tick } from "svelte";
 	import { base_url } from "$lib/dbfuncs";
 	import type { event } from "$lib/utiltypes";
-
-	let ticketSeats: String[] = [];
-	let ticketInfo: event | null = null;
-	onMount(() => {
-		ticketSeats = [
-			"A52",
-			"B23",
-			"C56",
-			"C57",
-			"D12"
-		]
+	import { current_user } from "$lib/user";
+	import { get } from "svelte/store";
+	
+	let ticketInfo: any = null;
+	let ticketId: any = null;
+	onMount(async () => {
 
 		// get the id from the url
 		const urlParams = new URLSearchParams(window.location.search);
-		const ticketId = urlParams.get('id');
+		ticketId = urlParams.get('id');
 		console.log(ticketId);
 		
 		// get the ticket info from the server
-		ticketInfo = {
-			id: 1,
-			name: "Jackpot Juicer",
-			date: new Date(),
-			venue: "The Factory",
-			artist: "Alec Benjamin",
-			genre: "Rock"
-		}	
+		const options = {method: 'GET', headers: {'User-Agent': 'insomnia/2023.5.8', 'ngrok-skip-browser-warning': 'true', 'no-cors': 'true'}};
+		let response: any = await fetch('https://chow-coherent-actually.ngrok-free.app/DBProjectTest/get_ticket_info.php?TicketID=' + ticketId, options)
+		response = await response.json();	
+		
+		// get the ticket info from the server
+		ticketInfo = response;	
+		
+		console.log(get(current_user));
 	});
+
+	async function buyTicket(event: any) {
+		event.preventDefault();
+		
+		// send the username and password to the server and check if they are correct
+		const form = new FormData();
+		form.append("TicketID", ticketId);
+		form.append("BuyerID", get(current_user));
+		console.log(form);
+		
+
+		let options: any = {
+		method: 'POST',
+		headers: {
+			'User-Agent': 'insomnia/2023.5.8',
+			 'ngrok-skip-browser-warning': 'true',
+			}
+		};
+
+		options.body = form;
+
+		let response: any = await fetch('https://chow-coherent-actually.ngrok-free.app/DBProjectTest/buy_ticket.php', options)
+		response = await response.json();
+		console.log(response);
+		
+	}
+
 </script>
 
 <main>
 	{#if ticketInfo == null}
 		<h1>Loading...</h1>
+	{:else if $current_user == -1}
+		<h1>You must be logged in to buy tickets</h1>
 	{:else}
 		<div id="form">
-			<h2>Buy Tickets to: {ticketInfo.name}</h2>
+			<h2>Buy Tickets to: {ticketInfo.EventName}</h2>
 			<img src="https://cdn.shopify.com/s/files/1/0651/9639/2689/files/DGD-DESKTOP-HERO_1000x1000.jpg?v=1656558793">
 
-			<h3>Venue: {ticketInfo.venue}</h3>
+			<h3>Venue: {ticketInfo.VenueName}</h3>
 
-			<h3>Date: {ticketInfo.date.toLocaleString()}</h3>
+			<h3>Date: {ticketInfo.EventTime} pm - {ticketInfo.EventDate}</h3>
 
 			<h3>Seat Number:</h3>
-			<select>
-				<option selected disabled value="">
-					Select 
-				</option>
-				{#each ticketSeats as seat}
-					<option>
-						{seat}
-					</option>
-				{/each}
-			</select>
+			<h3>{ticketInfo.StreetAddress}</h3>
 
 			<h3>Price:</h3>
-			<h3>$100</h3>
+			<h3>${(Math.round(ticketInfo.Price * 100) / 100).toFixed(2)}</h3>
 			
 			<div id="button-centerer">
-				<button>Buy Now!</button>
+				<button on:click={buyTicket}>Buy Now!</button>
 			</div>
 		</div>
 	{/if}
@@ -81,6 +96,7 @@
 
 	#form h2 {
 		margin: 0;
+		text-align: center;
 	}
 
 	#form h3 {
