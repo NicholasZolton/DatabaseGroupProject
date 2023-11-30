@@ -93,7 +93,30 @@
                 return $result;
             }
         }
-        
+        function getAvailableTickets(){
+            $conn = new mysqli(DataBaseLocation,DBUserName,DBPassword,NameOfDatabase);
+            if ($conn->connect_error) { 
+                die("Connection failed: " . $conn->connect_error); 
+            }
+            $sql = "SELECT T.Ticket_ID, T.Price
+                    FROM tickets_in_order AS T, `order` AS O
+                    WHERE O.Order_ID = T.Order_ID AND O.Buyer_ID IS NULL;";
+            if($stmt = $conn->prepare($sql)){
+                $stmt -> execute();
+                $stmt -> store_result();
+                if($stmt->num_rows == 0){
+                    return array();//returns an empty array if no tickets are available
+                }
+                $stmt->bind_result($ticketID,$price);
+                $result = array();
+                while($stmt->fetch()){
+                    $toAdd = ["Ticket_ID"=>$ticketID,"Price"=>$price];
+                    array_push($result,$toAdd);
+                }
+                return $result;
+            }
+    
+        }
         function getTicketInfo($ticketID){
             $conn = new mysqli(DataBaseLocation,DBUserName,DBPassword,NameOfDatabase);
             if ($conn->connect_error) { 
@@ -121,15 +144,23 @@
             }
                     
         }
-
+        $showAll = false;
         $userID = $_POST["UserID"];
-        
+        $ticketsForSale = getAvailableTickets();
         $tickets = getUsersTickets($userID);
         $result = [];
         foreach ($tickets as $ticket){
-            $ticketInfo = getTicketInfo($ticket);
-            $subresult = array_merge(["TicketID"=>$ticket], $ticketInfo);
-            array_push($result, $subresult);
+            $forSell = true;
+            foreach($ticketsForSale as $sellTicket){
+                if($ticket == $sellTicket["Ticket_ID"]){
+                    $forSell = false;
+                }
+            }
+            if($forSell || $showAll){
+                $ticketInfo = getTicketInfo($ticket);
+                $subresult = array_merge(["TicketID"=>$ticket], $ticketInfo);
+                array_push($result, $subresult);
+            }
         }
         echo json_encode($result,JSON_PRETTY_PRINT);
 

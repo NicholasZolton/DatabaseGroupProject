@@ -145,6 +145,8 @@ function createOrder($owner, $buyer){
         return $orderID;
     }
   } 
+
+    class InvalidDatabaseException extends Exception {};
     /*INPUT: Array in the form ["Ticket_ID"=>ticket to be bought,"Buyer_ID" => id of user who is buying the ticket
                                 "Order_ID" => order to add the ticket too]
              Leave Order_ID out or set to null if a new order is to be created.
@@ -219,43 +221,55 @@ function createOrder($owner, $buyer){
             $findStmt->bind_result($price);
             $findStmt->fetch();
         }
-        //remove ticket from sellOrder
-        $removeTicket = "DELETE FROM tickets_in_order
-                         WHERE  Order_ID = ? AND Ticket_ID = ?";
-        if($removeStmt = $conn->prepare($removeTicket)){
-            $removeStmt->bind_param("ii",$sellOrderID,$ticket_ID);
-            $removeStmt->execute();
-            if(mysqli_affected_rows($conn) == 0 ){
-                return "FAILURE: Not able to remove from sell order";
+        $conn->begin_transaction();
+        try{
+            //remove ticket from sellOrder
+            $removeTicket = "DELETE FROM tickets_in_order
+                             WHERE  Order_ID = ? AND Ticket_ID = ?";
+            if($removeStmt = $conn->prepare($removeTicket)){
+                $removeStmt->bind_param("ii",$sellOrderID,$ticket_ID);
+                $removeStmt->execute();
+                if(mysqli_affected_rows($conn) == 0 ){
+                    throw new InvalidDatabaseException();
+                }
             }
+            //change owner of ticket to buyer
+            $changeOwner = "UPDATE ticket
+                            SET Owner_ID = ?
+                            WHERE Ticket_ID = ?";
+            if($changeStmt = $conn->prepare($changeOwner)){
+                $changeStmt->bind_param("ii",$buyer_ID,$ticket_ID);
+                $changeStmt->execute();
+                if(mysqli_affected_rows($conn) == 0 ){
+                    throw new InvalidDatabaseException();
+                }
+            }
+            //create new order if orderID was not specified
+            if(is_null($orderID)){
+                $orderID = createOrder($ownerID,$buyer_ID);
+                if(is_string($orderID)){
+                    return $orderID;
+                }
+            }
+            //add to order
+            $addToOrder = "INSERT INTO tickets_in_order
+                           VALUES (?,?,?)";
+            if($addStmt = $conn->prepare($addToOrder)){
+                $addStmt->bind_param("iid",$ticket_ID,$orderID,$price);
+                $addStmt->execute();
+                if(mysqli_affected_rows($conn) == 0){
+                    throw new InvalidDatabaseException();
+                }
+            }
+            $conn->commit();
         }
-        //change owner of ticket to buyer
-        $changeOwner = "UPDATE ticket
-                        SET Owner_ID = ?
-                        WHERE Ticket_ID = ?";
-        if($changeStmt = $conn->prepare($changeOwner)){
-            $changeStmt->bind_param("ii",$buyer_ID,$ticket_ID);
-            $changeStmt->execute();
-            if(mysqli_affected_rows($conn) == 0 ){
-                return "FAILURE: Not able to change owner of ticket";
-            }
+        catch(InvalidDatabaseException $exception){
+            $conn->rollback();
+            return "FAILURE Transaction Unable to Complete";
         }
-        //create new order if orderID was not specified
-        if(is_null($orderID)){
-            $orderID = createOrder($ownerID,$buyer_ID);
-            if(is_string($orderID)){
-                return $orderID;
-            }
-        }
-        //add to order
-        $addToOrder = "INSERT INTO tickets_in_order
-                       VALUES (?,?,?)";
-        if($addStmt = $conn->prepare($addToOrder)){
-            $addStmt->bind_param("iid",$ticket_ID,$orderID,$price);
-            $addStmt->execute();
-            if(mysqli_affected_rows($conn) == 0){
-                return "FAILURE: Not able to add ticket to order";
-            }
+        catch(mysqli_sql_exception $exception){
+            $conn->rollback();
+            return "FAILURE Transaction Unable to Complete";
         }
         $conn->close();
         return $orderID;

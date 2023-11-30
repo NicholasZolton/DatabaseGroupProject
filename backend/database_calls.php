@@ -1,5 +1,5 @@
 <?php
-    define("DataBaseLocation","127.0.0.1"); #Change these based on the location/name of the database you are using.
+    define("DataBaseLocation","127.0.0.1");
     define("DBUserName","root");
     define("DBPassword","");
     define("NameOfDatabase","forassignment8");
@@ -865,8 +865,8 @@
         $result = array();
         foreach ($events as $event){
             $eventID = $event["Event_ID"];
-            if($event[$filterAttr] == $filterVal)
-                array_push($result, $eventID);
+            //if($event[$filterAttr] == $filterVal)
+            array_push($result, $eventID);
         }
         return $result;
     }
@@ -898,4 +898,7 @@
         }
         return $result;
     }
+
+
+
 ?>
