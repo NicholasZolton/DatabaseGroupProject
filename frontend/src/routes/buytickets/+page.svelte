@@ -4,6 +4,7 @@
 	import type { event } from "$lib/utiltypes";
 	import { current_user } from "$lib/user";
 	import { get } from "svelte/store";
+	import { goto } from "$app/navigation";
 	
 	let ticketInfo: any = null;
 	let ticketId: any = null;
@@ -49,6 +50,7 @@
 		response = await response.json();
 		console.log(response);
 		
+		goto('/dashboard');
 	}
 
 </script>

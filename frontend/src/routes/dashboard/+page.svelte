@@ -3,68 +3,51 @@
 	import { onMount } from "svelte";
 	import { current_user } from "$lib/user";
 	import { get } from "svelte/store";
-
-	// let tickets = [
-	// 	{
-	// 		id: 1,
-	// 		name: "ticket1"
-	// 	},
-	// 	{
-	// 		id: 2,
-	// 		name: "ticket2"
-	// 	},
-	// 	{
-	// 		id: 3,
-	// 		name: "ticket4"
-	// 	},
-	// 	{
-	// 		id: 4,
-	// 		name: "ticket4"
-	// 	},
-	// 	{
-	// 		id: 5,
-	// 		name: "ticket5"
-	// 	},
-	// 	{
-	// 		id: 6,
-	// 		name: "ticket6"
-	// 	},
-	// 	{
-	// 		id: 7,
-	// 		name: "ticket7"
-	// 	},
-	// 	{
-	// 		id: 8,
-	// 		name: "ticket8"
-	// 	},
-	// ]
+	import UserIcon from "$lib/icons/UserIcon.svelte";
 	
 	let tickets: any[] | null = null;
+	let username = "User";
 	onMount(async () => {
+		// get the user's info
+		let options: any = {method: 'GET', headers: {'User-Agent': 'insomnia/2023.5.8', 'ngrok-skip-browser-warning': 'true', 'no-cors': 'true'}};
+		let response: any = await fetch('https://chow-coherent-actually.ngrok-free.app/DBProjectTest/get_user_info.php?userID=' + $current_user, options)
+		// console.log(await response.text());
+		response = await response.json();	
+		username = response.UserName;
+
+		// get the user's tickets
 		const form = new FormData();
 		form.append("UserID", $current_user);
 
-		let options: any = {
-		method: 'POST',
-		headers: {
-			'User-Agent': 'insomnia/2023.5.8',
-			 'ngrok-skip-browser-warning': 'true',
-			}
+		options = {
+			method: 'POST',
+			headers: {
+				'User-Agent': 'insomnia/2023.5.8',
+				'ngrok-skip-browser-warning': 'true',
+				}
 		};
 
 		options.body = form;
 
-		let response: any = await fetch('https://chow-coherent-actually.ngrok-free.app/DBProjectTest/get_user_tickets.php', options)
+		response = await fetch('https://chow-coherent-actually.ngrok-free.app/DBProjectTest/get_user_tickets.php', options)
+		// console.log(await response.text());
 		response = await response.json();
 		tickets = response;
 		console.log(tickets);
+
+		
 	});
 	
 </script>
 
 <main>
 	<div id="form">
-		<h2>Welcome, User!</h2>
+		<a href='/userprofile'>
+			<div id="user-info">
+				<UserIcon css={"width: 30px; height: 30px;"}/>	
+			</div>
+		</a>
+		<h2>Welcome, {username}!</h2>
 		<div id="left-aligned">
 			<h3>My Tickets:</h3>
 		</div>
@@ -98,6 +81,12 @@
 
 <style>
 
+	#user-info {
+		position: absolute;
+		top: 25px;
+		right: 25px;
+	}
+
 	#ticket-information {
 		width: 100%;
 		display: flex;
@@ -112,6 +101,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		flex-direction: column;
 	}
 
 	#ticket button {
@@ -198,6 +188,7 @@
 	}
 
 	#form {
+		position: relative;
 		height: 90%;
 		min-height: 85vh;
 		width: 80%;

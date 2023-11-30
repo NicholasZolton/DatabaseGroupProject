@@ -16,12 +16,93 @@
 	async function sendSignup(event: any) {
 		event.preventDefault();
 		
+		// check if inputs are valid
+		if (username == "" || password == "" || email == "" || dob == "") {
+			alert("Please fill out all fields");
+			return;
+		}
+
+		if (username.length > 20) {
+			alert("Username must be less than 20 characters");
+			return;
+		}
+		
+		if (password.length > 20) {
+			alert("Password must be less than 20 characters");
+			return;
+		}
+
+		if (email.length > 50) {
+			alert("Email must be less than 50 characters");
+			return;
+		}
+
+		// check that dob is in the correct format (mm/dd/yyyy)
+		let dob_split = dob.split("/");
+
+		if (dob_split.length != 3) {
+			alert("DOB must be in the form mm/dd/yyyy");
+			return;
+		}
+
+		let month = parseInt(dob_split[0]);
+
+		if (month < 1 || month > 12) {
+			alert("Invalid DOB month");
+			return;
+		}
+
+		let day = parseInt(dob_split[1]);
+
+		if (day < 1 || day > 31) {
+			alert("Invalid DOB day");
+			return;
+		}
+
+		let year = parseInt(dob_split[2]);
+
+		if (year < 1900 || year > 2022) {
+			alert("Invalid DOB year");
+			return;
+		}
+		
+		// check that email is in the correct format
+		let email_split = email.split("@");
+		console.log(email_split);
+
+		if (email_split.length != 2) {
+			alert("Email must be in the form 'test@example.com'.");
+		}
+		
+		if (email_split[0].length < 1) {
+			alert("Email must be in the form 'test@example.com'.");
+		}
+
+		if (email_split[1].length < 1) {
+			alert("Email must be in the form 'test@example.com'.");
+		}
+
+		let domain_split = email_split[1].split(".");
+
+		if (domain_split.length < 2) {
+			alert("Email must be in the form 'test@example.com'");
+		}
+
+		if (domain_split[0].length < 1) {
+			alert("Email must be in the form 'test@example.com'");
+		}
+		
+		if (domain_split[1].length < 1) {
+			alert("Email must be in the form 'test@example.com'");
+		}
+		
 		// send the username and password to the server and check if they are correct
 		const form = new FormData();
 		form.append("Username", username);
 		form.append("Password", password);
 		form.append("Email", email);
 		form.append("DOB", dob);
+		console.log(form);
 
 		let options: any = {
 		method: 'POST',
@@ -35,11 +116,10 @@
 
 		let response: any = await fetch('https://chow-coherent-actually.ngrok-free.app/DBProjectTest/signup.php', options)
 		response = await response.json();
-		
 		console.log(response);
 		
 		if (response.UserID == null) {
-			alert("Incorrect username or password");
+			alert("Failed to create user.");
 			return;
 		}
 		current_user.set(parseInt(response.UserID));

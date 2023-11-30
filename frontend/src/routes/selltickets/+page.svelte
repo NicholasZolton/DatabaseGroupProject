@@ -5,7 +5,7 @@
 
 	let ticketId: any = 0;
 	let ticketInfo: any = null;
-	let ticketPrice: number = 0;
+	let ticketPrice: number = 10;
 	onMount(async () => {
 
 		// get the id from the url
@@ -16,6 +16,7 @@
 		// get the ticket info from the server
 		const options = {method: 'GET', headers: {'User-Agent': 'insomnia/2023.5.8', 'ngrok-skip-browser-warning': 'true', 'no-cors': 'true'}};
 		let response: any = await fetch('https://chow-coherent-actually.ngrok-free.app/DBProjectTest/get_ticket_info.php?TicketID=' + ticketId, options)
+		// console.log(await response.text());
 		response = await response.json();	
 		
 		// get the ticket info from the server
@@ -30,6 +31,8 @@
 		form.append("SellerID", $current_user);
 		form.append("TicketID", ticketId);
 		form.append("Price", ticketPrice.toString());
+		console.log(form);
+		
 
 		let options: any = {
 		method: 'POST',
@@ -42,9 +45,22 @@
 		options.body = form;
 
 		let response: any = await fetch('https://chow-coherent-actually.ngrok-free.app/DBProjectTest/sell_ticket.php', options)
+		// console.log(await response.text());
 		response = await response.json();
+		console.log(response);
 		
 		goto("/dashboard");
+	}
+	
+	let prevPrice: number = 10;
+	async function checkPrice(event: any) {
+		event.preventDefault();
+		// validate the price, if it is not valid, set it back to the previous price
+		if (!(ticketPrice > 0 && ticketPrice < 100000)) {
+			ticketPrice = prevPrice;
+			return;
+		}
+		prevPrice = ticketPrice;
 	}
 </script>
 
@@ -65,7 +81,7 @@
 			<h4>{ticketInfo.StreetAddress}</h4>
 
 			<h3>Price:</h3>
-			<input type="text" placeholder="100" bind:value={ticketPrice}>
+			<input on:blur={checkPrice} type="text" placeholder="10" bind:value={ticketPrice}>
 			
 			<div id="button-centerer">
 				<button on:click={sellCurrentTicket}>Sell Ticket</button>

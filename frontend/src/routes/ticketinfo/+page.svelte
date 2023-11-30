@@ -13,6 +13,7 @@
 		const options = {method: 'GET', headers: {'User-Agent': 'insomnia/2023.5.8', 'ngrok-skip-browser-warning': 'true', 'no-cors': 'true'}};
 		let response: any = await fetch('https://chow-coherent-actually.ngrok-free.app/DBProjectTest/get_ticket_info.php?TicketID=' + ticketId, options)
 		response = await response.json();	
+		console.log(response);
 		
 		// get the ticket info from the server
 		if (response.length == 0) {
